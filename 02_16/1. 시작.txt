@@ -1,0 +1,194 @@
+virtualbox - windows hosts, extension pack
+
+unbuntu - 20.04 lts, 
+
+virtualbox 관리자에서 새로만들기 해서 새로 만들어야하는데.. 흠...
+
+환경설정에 입력에서 호스트키조합 ctrl+alt 로 변경
+
+그리고 설정에서 디스플레이에 그래픽컨트롤러 VboxVGA
+
+뭐 많이 했는데 다시하라하면 잘 못할듯.. 흠..
+
+shift+space 로 한영키 바꿈. 
+
+
+os 와 커널의 차이.
+커널은 완전 알맹이 , 뭐 어플리케이션 같은거는 여러개가 동시에 실행되고 그럴수도 있는데, 이때 0.1초는 얘, 0.1초는
+다른거 이런식으로 진행되는 걸 정해주는애가 커널임.
+, os 는 전체..? 
+
+
+그 내부에서
+dohdong@ 다음 내용 바꾸는거 어떻게 치는건지 알아내서 바꿔보자.
+
+sudo hostnamectl set-hostname (orange)
+sudo (nano) /etc/hosts
+
+sudo vi /etc/hosts 
+vi 는 어떻게 나가는가.
+
+스냅샷 ( 머신 - 스냅샷 찍기 - 하고 이름 정하고 확인누르면 되는듯 ) 
+
+
+nat 보다 virtual 머신이 더 좋나봄
+
+
+
+설정 네트워크에 Nat네트워크 로 하고, 고급에서 mac 주소도 새로고침해줘야함
+
+
+라우터 허브, 
+라우터 - 네트워크 간에 전송.
+허브는 공통적인 접점 
+
+
+
+ip address. 
+
+public IP 주소 체계
+A class :		   0.0.0.0 ~ 127.255.255.255
+B class : 		128.0.0.0 ~ 191.255.255.255
+C class : 		192.0.0.0 ~ 223.255.255.255
+D class : 		224.0.0.0 ~ 239.255.255.255
+E class : 		240.0.0.0 ~ 255.255.255.255
+
+A class : 		0------- ******** ******** ********
+B class : 		10------ -------- ******** ********
+C class : 		110----- -------- -------- ********
+D class :		1110**** ******** ******** ********
+E class : 		1111**** ******** ******** ********
+
+- class 개수  * host 개수 ,  A class 는 2^7개 뿐, B class 는 2^14 개, 
+
+
+NAT IP 주소 (사설 IP)
+A class :		 10.xxx.xxx.xxx
+B class : 		172.16.xxx.xxx ~ 172.31.xxx.xxx
+C class : 		192.168.0.xxx ~ 192.168.255.xxx
+NAT 방식은 내부에서 쓰는거라 이게 같다고 같은장소인게 아님, 겹칠수 있음.
+위의 public 범위에서 NAT 범위는 빠지는거임 공인IP 로 못쓰는 범위가 NAT IP 범위
+
+
+loopback address 
+127.xxx.xxx.xxx 	127로 시작하는건 자기 자신
+
+						       subnet mask
+A class : 		11111111 00000000 00000000 00000000 	255.0.0.0 	8
+B class : 		11111111 11111111 00000000 00000000	255.255.0.0	16
+C class : 		11111111 11111111 11111111 00000000	255.255.255.0	24
+	subnet mask
+C class : 		11111111 11111111 11111111 10000000	255.255.255.128  
+		이렇게 해서 분리해서 쓰기위해 이렇게 설정할수도 있다.
+
+
+
+
+ip 는 결국 전화번호 같은거.
+네임서버(DNS) 는 www.naver.com 같은, 이런걸 치면 ip address 를 몰라도 알아서 연결해주는 별칭같은것.
+
+
+
+
+시스템 함부로 끄면 안되고 로그아웃해야함
+리눅스는 항상 켜져있는 거임. 꺼지면 큰일남 
+
+종료는 shutdown -P now  , halt, shutdown -r now, init 0 
+
+
+
+최상위 관리자 들어가는 명령어 : sudo -i . 조심해야함.
+
+
+
+시간
+date
+ls /usr/share/zoneinfo/Asia
+mv /etc/localtime /etc/localtime_org
+ln -s /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+링크를 서울로 바꾼거임
+
+timedatectl (시간)
+cal  (달력)
+
+clear 대신 ctrl+L 키 누르면 깔끔해짐
+
+
+history 키로 그간 쳐봤던 명령어가 나옴.
+!(치고싶은 줄 번호)  , !! ( = 방금 실행한 명령 재실행)
+!-(아래에서부터 번호)
+
+
+도움말 = man man
+man ls
+man (숫자)  fstab     
+
+logname
+whoami
+who am i (-하니까 안되는디?)
+who 
+id
+w
+
+
+clear ctrl-l
+
+추가한 사용자로 접속하기위한 명령어 su - user1
+w
+
+
+write user1 
+
+wall 하고 텍스트 입력하고 ctrl+d 누르면 나가짐.
+
+who 로 사용자 확인가능. 옵션은 who -q , who -w , who -a, who
+
+리눅스에서는 who --help, who -q, who quit 등등 중구난방이다.
+
+
+
+시스템 정보 보는법 uname 
+ hostname
+ arch 
+uname --help 해서 더 필요한 정보 확인가능.
+
+
+
+echo
+ex) echo Have a good time.
+echo -e Have a good time "\n"Nice good day. (-e 로 "\n" 이 사용가능.) 
+
+which ls
+which cd
+which fdisk
+
+finger user1
+
+whatis ls   ( = man -f ls )
+
+sleep 5s (ㅋㅋ) 
+
+su - user1	,ls 	,pwd	,ls	,exit
+
+- 를 치고 안 치고가 차이가 있음. 보통 - 치고 들어감.
+
+
+현재 리눅스 시스템 환경을 bridge 네트웍으로 구성하고, 
+maple 서버는 고정 ip로 변경하고, 
+maple 시스템과 orange 시스템의 통신을 확인하시오.
+
+Oracle VM VirtualBox 관리자 에서 설정 -네트워크 -어댑터에 브릿지 로 bridge 네트웍 구성.
+고정 ip 로 변경은 
+
+gui 환경에서 설정에서 변경해주면 됨. IPv4 방식에서 수동으로 바꾸면 고정이 되는것. 
+원래 있던거를 고정으로 해주면 됨. 
+네임서버는 그냥 적당히 168.126.63.1 , 168.126.63.2 를 씀.
+다시 원래대로 할때는 자동으로 해주면 됨
+
+
+ping 10.0.2.4 로 서로 연결되었음을 확인가능. 
+
+
+
+
+.
