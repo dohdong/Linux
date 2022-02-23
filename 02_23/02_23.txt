@@ -1,0 +1,176 @@
+어제 복습 
+
+ps   ,  pstree    ,   kill   ,    kg    ,     bg    ,    jobs   ,   
+service   ,   systemctl -t service ,target      ,    sudo systemctl set-default multi-user.target
+systemctl start 서비스명   ,  systemctl stop ,status ,restart
+ 
+
+
+------------- 02_23 ------------
+
+FTP 서버를 만들고 동작시킬 예정. 파일 전송 서비스 .
+
+sudo apt install vsftpd   하고 수정을 해주어야함  sudo vi /etc/vsftpd.conf  해서 
+25째 줄 YES 로 바꾸고 바로 밑에 배너 넣어줌.  32, 41, 45 번째 줄 주석 해제
+
+sudo -i 에서 cd /srv/ftp 로 가서 touch welcom.msg 해주고 , mkdir pub 해주고. chmod 777 pub 하고 
+cd pub   cp /boot/vmli~아무거나 복사 해서 넣어줌  ,   systemctl restart vsftpd.service   ,    
+systemctl status vsftpd.service 로 상태 확인 가능.  
+exit 해서 ftp 10.0.2.15 하면 서버에 들어갈 수 있음.
+
+ftp 서버에서 cd pub 해서 확인가능. 가서 get (아까 받은파일하면 다운됨)
+
+!ssh 하면 바로 ssh 들어가짐. netstat -at  , netstat -atn
+
+
+
+
+--------- 포트로 구분한다고 함. 어제도 포트 바꿔서 새로 만들어주니까 ssh 되는거 보면 그런듯.
+	잘은 모르겠는데 그냥 그런갑다~ 하는걸로. 
+	아파치는 80 이니까 포트번호 80으로 해서 들어간다고 함.
+src	dst	port 
+10.0.2.?   10000     23    이렇게 생겼음.
+	ip 이후에 port 번호까지 설정해줘야 찾아갈수 있음. 예를 들어 정부청사 건물(ip) 안에 부서(port) 
+	라고 보면 되는듯.
+
+
+systemctl restart vsftpd.serv
+
+
+graphical로 바꿀때 reboot 하면 안되니까 sudo shutdown -r now 로 해주면 됨.
+
+
+
+maple 에서 작업
+apt install xrdp   ,   /etc/xrdp/startwm.sh
+
+sudo adduser xrdp ssl-cert
+sudo vi /etc/xrdp/startwm.sh 로 들어갔다 빠져나옴
+
+
+sudo vi /etc/xrdp/startwm.sh
+
+32번째 라인가서  fi 다음에    unset DBUS_SESSION_BUS_ADDRESS
+			unset XDG_RUNTIME_DIR
+
+
+
+
+sudo rm /var/lib/apt/lists/lock
+sudo rm /var/cache/apt/archives/lock
+ sudo rm /var/lib/dpkg/lock*
+으로 지우고 
+sudo apt install openssh-server 로 하면 되네..
+
+
+
+sudo apt install mysql-server
+
+sudo mysql
+
+show databases;
+
+create user 'koko'@'%' identified by '1234';
+create database bulletin;
+grant all privileges on bulletin.* to 'koko'@'%';
+show grants for 'koko'@'%';
+mysql -u koko -p  1234 하면 접속됨
+use bulletin;
+show tables;
+CREATE TABLE `user` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`name` varchar(20) NOT NULL,
+`profile` varchar(200) DEFAULT NULL,
+PRIMARY KEY(`id`)
+);
+
+desc user;
+
+insert into `user` values(1, '홍길동', 'developer');
+insert into `user` values(2, '이미나', 'database administrator');
+insert into `user` values(3, '고상원', 'data scientist, developer');
+insert into `user` values(4, '최원술', 'bigdata engineer, developer');
+
+select * from user;
+
+
+sudo apt install apache2
+sudo -i   ,   cd /var/www/html 에서  mv index.html index.html.org   , 하고 vi index.html 로 뭔가 원하는걸 만들어 줄 수 있음. 그 다음에 크롬 열어서 local host 치면 vi index.html 로 만들어준거를 볼 수 있음.
+
+
+
+
+PHP 설치 
+
+apt install php php-mysql
+cd /var/www/html
+vi phpinfo.php  안에 <?php     phpinfo()    ?> 해주면 됨
+cd /etc/php/7.4/apache2  에서  vi php.ini  926번째 줄 ; 없애주면 됨 
+systemctl restart apache2.service 로 재시작.
+
+cd /var/www/html  가서 vi phpmysql.php 에 아래 내용 넣어줌.
+<?php
+$host = "localhost";
+$user = "koko";
+$pw = "1234";
+$dbName = "bulletin";
+$conn = new mysqli($host,$user,$pw,$dbName);
+
+if($conn) { echo "Connection established"."<br>"; }
+else { die('Could not connect : '.mysqli_error($conn)); }
+
+$sql = "SELECT * FROM user";
+$result = mysqli_query($conn, $sql);
+while($row = mysqli_fetch_array($result)){
+        echo $row['name']."---".$row['profile']."<br>";
+}       
+mysqli_close($conn);
+
+
+mysql    ,   create database wp_db;   , create user wp_user@'%' identified by '1234';
+grant all privileges on wp_db.* to wp_user@'%';
+
+exit 해서  curl  , curl -O https://ko.wordpress.org/wordpress-5.2.4.ko_KR.tar.gz
+ls
+sudo tar zxvf wordpress-5.2.4.ko_KR.tar.gz -C /var/www/html
+
+sudo 가서 cd /var/www/html 가서 chmod 707 wordpress (? 얘도 하라는듯?)
+chown -R www-data:www-data wordpress/
+cd wordpress  가서 cp wp-config-sample.php wp-config.php
+vi wp-config.php  안에서 보면 뭐 설정해둔게 있음. 별거 아니라고 함 . 안해 퉷 중요한것도 아니라함.
+하고 나와서
+cd /etc/apache2 로 가서 vi 000-default.conf 를 해줘야함  
+여기서 중간쯤에 wordpress 로 변경해줘야함. 
+그 이후는 모르겠음 ㅋㅋ 뭐한거에요 ㅋㅋ
+systemctl restart apache2.service 해주면 끝이라고 함.
+
+
+
+
+
+원래는 하나의 컴퓨터에 설치 되어있었음.
+
+근데 실제로는 웹서버는 다른 컴퓨터, mysql 은 다른곳이니까
+
+복제해서 apache2 와 php 서버를 만든거를 가지고 와서 다른곳에서 쓰는걸로?
+음..
+
+32번으로 서버 지정
+
+
+
+
+
+새로만든거 서버를 고정 ip 32 로 바꿈 
+
+
+
+
+nmcli c mod '유선 연결 1' ipv4.method manual ipv4.address 10.0.2.32/24 ipv4.gateway 10.0.2.1 ipv4.dns 8.8.8.8
+
+
+sudo apt install apache2
+
+
+
+.
